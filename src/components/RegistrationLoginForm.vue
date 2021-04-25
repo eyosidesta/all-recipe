@@ -160,21 +160,21 @@ export default {
   }),
   methods: {
       signIn() {
-          console.log("comes here")
-          this.$store.dispatch("Login", {
+          this.$store.dispatch("SignIn", {
               email: this.loginEmail,
               password: this.loginPassword
           })
           .then(success=> {
-              console.log("successfully logged in");
+            this.$router.push("/")
+              // console.log("successfully logged in");
           })
           .catch(err => {
-              console.log('error found in logging in');
+              // console.log('error found in logging in');
           })
           console.log(this.loginEmail + " " + this.loginPassword)
       },
       signUp() {
-          this.$store.dispatch("SignIn", {
+          this.$store.dispatch("SignUp", {
               fullname: this.registrationName,
               email: this.registrationEmail,
               password: this.registrationPassword
