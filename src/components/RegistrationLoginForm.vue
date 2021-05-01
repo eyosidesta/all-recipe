@@ -95,22 +95,26 @@
                           </v-btn>
                         </div>
                         <h4 class="text-center mt-4">Ensure your email for registration</h4>
-                        <v-form>
+                        <v-form v-model="valid">
                           <v-text-field
                             v-model="registrationName"
                             label="Name"
+                            :rules="nameRules"
                             name="Name"
                             prepend-icon="person"
                             type="text"
                             color="teal accent-3"
+                            required
                           />
                           <v-text-field
                             v-model="registrationEmail"
+                            :rules="emailRules"
                             label="Email"
                             name="Email"
                             prepend-icon="email"
                             type="text"
                             color="teal accent-3"
+                            required
                           />
 
                           <v-text-field
@@ -150,13 +154,23 @@
 <script>
 export default {
   data: () => ({
+    isLoading: false,
+    valid: false,
     loginEmail: '',
     loginPassword: '',
     registrationName: '',
     registrationEmail: '',
     registrationPassword: '',
     confirmPassword: '',
-    step: 1
+    step: 1,
+    nameRules: [
+        v => !!v || 'Name is required',
+        v => v.length <= 50 || 'Name must be less than 50 characters',
+      ],
+    emailRules: [
+        v => !!v || 'E-mail is required',
+        v => /.+@.+/.test(v) || 'E-mail must be valid',
+      ],
   }),
   methods: {
       signIn() {
@@ -165,13 +179,14 @@ export default {
               password: this.loginPassword
           })
           .then(success=> {
+            
             this.$router.push("/")
+            // location.reload()
               // console.log("successfully logged in");
           })
           .catch(err => {
-              // console.log('error found in logging in');
+              console.log('error found in logging in', err);
           })
-          console.log(this.loginEmail + " " + this.loginPassword)
       },
       signUp() {
           this.$store.dispatch("SignUp", {
@@ -185,7 +200,6 @@ export default {
           .catch(err => {
               console.log('error while registering', err)
           })
-          console.log(this.registrationName + " " + this.registrationEmail + " " + this.registrationPassword)
       }
   },
   props: {

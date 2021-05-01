@@ -114,7 +114,7 @@
         this.description='',
         this.imageUrl=null,
         this.$refs.observer.reset()
-        this.$router.push('/detail-recipe')
+        this.$router.push('/')
       },
       clear () {
         this.name = ''

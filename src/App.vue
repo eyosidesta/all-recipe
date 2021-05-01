@@ -1,9 +1,9 @@
 <template>
   <v-app>
     <v-container>
-      <!-- <div v-if="getAuthenticated"> -->
+      <div v-if="$route.name !== 'login' || getAuthenticated">
         <SideBar />
-      <!-- </div> -->
+      </div>
       <router-view></router-view>
     </v-container>
   </v-app>
@@ -12,15 +12,23 @@
 
 <script>
 import SideBar from "./views/SideBar"
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
   export default {
     name: "App",
-    computed: mapGetters(['getAuthenticated']),
+    computed: {
+      ...mapGetters(['getAuthenticated']),
+      },
+    methods: {
+      ...mapActions(['isAuthenticated'])
+    },
     data: () => ({
-      isLoggedIn: true
+      isLoggedIn: false
     }),
     components: {
       SideBar
+    },
+    created() {
+      this.isAuthenticated()
     }
   }
 </script>

@@ -2,6 +2,9 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import RegistrationLoginForm from '../components/RegistrationLoginForm.vue'
 import AddRecipe from "../components/AddRecipe.vue"
+import MyFavorites from "../views/myFavorites.vue"
+import MyRecipe from "../components/MyRecipe.vue"
+import IMadeIt from "../views/IMadeIt.vue"
 import Login from '../components/Login.vue'
 // import Home from '../views/Home.Vue'
 import {mapGetters} from 'vuex'
@@ -13,7 +16,7 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/login',
-    name: 'registrationLoginForm',
+    name: 'login',
     component: RegistrationLoginForm,
   },
   {
@@ -25,7 +28,8 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import('../views/Home.vue'),
     beforeEnter: (to, from, next) => {
-      if(store.getters.getAuthenticated === true) {
+      // if(store.getters.getAuthenticated === true) {
+        if(localStorage.getItem('authUser')){
         next();
       }
       else {
@@ -34,7 +38,27 @@ const routes = [
     }
   },
   {
-    path: '/detail-recipe',
+    path: '/add-recipe',
+    name: 'add-recipe',
+    component: AddRecipe
+  },
+  {
+    path: '/favorites',
+    name: 'favorites',
+    component: MyFavorites
+  },
+  {
+    path: '/i-made-it',
+    name: 'iMadeIt',
+    component: () => import('../views/IMadeIt.vue'),
+  },
+  {
+    path: '/my-recipe',
+    name: 'miRecipe',
+    component: MyRecipe
+  },
+  {
+    path: '/:id',
     name: 'detail-recipe',
     component: () => import('../views/DetailRecipe.vue'),
     // beforeEnter: (to, from, next) => {
@@ -43,14 +67,13 @@ const routes = [
     //   }
     //   else {
     //     next('/login')
-    //   }
+    //   }how to convert object to
     // }
   },
-  {
-    path: '/add-recipe',
-    name: 'add-recipe',
-    component: AddRecipe
-  }
+  
+  // {
+  //   path: '/'
+  // }
 ]
 
 const router = new VueRouter({

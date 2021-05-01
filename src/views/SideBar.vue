@@ -15,7 +15,7 @@
           size="64"
         ></v-avatar>
 
-        <div>Eyosias Desta</div>
+        <div>{{userInfo[0].fullname}}</div>
       </v-sheet>
 
       <v-divider></v-divider>
@@ -40,21 +40,23 @@
         <div class="pa-2">
             <v-card align="center" class="pa-3">
                 <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10" class="mb-8">
-                    <v-avatar size="40">
-                        <v-img src="https://cdn.vuetifyjs.com/images/lists/2.jpg"></v-img>
-                    </v-avatar>
+                    <v-avatar
+                      class="mb-4"
+                      color="grey darken-1"
+                      size="40"
+                    ></v-avatar>
                 </v-badge>
                 <h4 class="grey--text">Total Recipe</h4>
-                <h3>922</h3>
-                <h5 class="green--text">My Recipe is: 0</h5>
+                <h3>15</h3>
+                <h5 class="green--text">My Recipe is: 6</h5>
                 <v-card color="deep-purple" dark class="mt-5">
                     <v-list-item two-line>
                         <v-list-item-content>
                             <v-list-item-title>
-                                Your Wallet Address
+                                Thanks for choosing us
                             </v-list-item-title>
                             <v-list-item-subtitle>
-                                3QjwF2YkhdygZ47Akjh
+                              <a style="color: white" @click="logout">logout</a>
                             </v-list-item-subtitle>
                         </v-list-item-content>
                     </v-list-item>             
@@ -65,17 +67,41 @@
     </v-navigation-drawer>
 </template>
 <script>
+import { mapActions, mapGetters } from 'vuex'
 export default {
-    data: () => ({
-        cards: ['Today', 'Yesterday'],
-      drawer: null,
-      links: [
-        ['mdi-inbox-arrow-down', 'All Recipes', '/'],
-        ['mdi-send', 'My Recipe', 'my-recipe'],
-        ['mdi-delete', 'Favorites', 'favorites'],
-        ['mdi-alert-octagon', 'I Made It', 'i-made-it'],
-      ]
-        })
+  computed: {
+    ...mapGetters(['getUser', 'allRecipes', 'getCountAllRecipe', 'getMyCount'])
+  },
+  methods: {
+    ...mapActions(['getRecipes', 'getMyRecipe']),
+    logout() {
+      this.$store.dispatch('logout')
+      .then(success => {
+        this.$router.push('/login')
+        console.log(success)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    }
+  },
+  data: () => ({
+    // isLocallySaved: false,
+    userInfo: {},
+    cards: ['Today', 'Yesterday'],
+    drawer: null,
+    links: [
+      ['home', 'All Recipes', '/'],
+      ['mdi-send', 'My Recipe', 'my-recipe'],
+      ['mdi-inbox-arrow-down', 'Favorites', 'favorites'],
+      ['mdi-alert-octagon', 'I Made It', 'i-made-it'],
+    ]
+  }),
+  created () {
+    this.userInfo = JSON.parse(localStorage.getItem('authUser'))
+    this.getRecipes()
+    this.getMyRecipe(parseInt(this.userInfo[0].id))
+  }
 }
 </script>
 <style scoped>

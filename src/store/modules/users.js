@@ -2,10 +2,14 @@ import axios from 'axios'
 
 export default {
     state: {
-        authenticated: false
+        userAuthData: localStorage.getItem('authUser') || {},
+        authenticated: false,
+        user: {}
     },
     getters: {
-        getAuthenticated: (state) => state.authenticated
+        getAuthenticated: (state) => state.authenticated,
+        getUserInfo: (state) => state.userAuthData,
+        getUser: (state) => state.user
     },
     actions: {
         SignIn: ({commit, getters},payload) => {
@@ -13,12 +17,12 @@ export default {
                 axios.post("getLogin", payload)
                 .then((data) => {
                     if(data.status === 200) {
-                        resolve(true)
-                        // this.authenticated = true
-                        console.log("ddata", data.data.token)
-                        localStorage.setItem('authUser', {data: data.data})
-                        commit('authenticated', true)
-                        console.log("this.authenticated",getters.getAuthenticated)
+                        const newData = {...data.data}
+                        const user = {...newData[0]}
+                        localStorage.setItem('authUser', JSON.stringify(newData))
+                        // axios.defaults.headers.common = {'Content-Type': 'application/json','authHeader':'Bearer ' + newData.token}
+                        commit('authenticated', newData, user, true)
+                        resolve(data.data)
                     }
                 })
                 .catch(err => {
@@ -29,9 +33,9 @@ export default {
         SignUp: ({commit}, payload) => {
             return new Promise((resolve, reject) => {
                 axios.post('signUp', payload)
-                .then((data, status) => {
-                    if(status === 201) {
-                        resolve(true)
+                .then((data) => {
+                    if(data.status === 201) {
+                        resolve(data.data)
                     }
                 })
                 .catch(err => {
@@ -39,9 +43,28 @@ export default {
                 }) 
             })
         },
+        isAuthenticated: ({commit}) => {
+            if(localStorage.getItem('authUser')) {
+                console.log("user is authenticated")
+                commit('userAuthenticated', true)
+            } else {
+                commit('userAuthenticated', false)
+            }
+        },
+        logout: ({commit}) => {
+            localStorage.removeItem('authUser')
+            // commit('userAuthenticated', false)
+        }
     },
     mutations: {
-        authenticated: (state, authenticated) => state.authenticated = authenticated
+        authenticated (state, userInfo, user, isTrue) {
+            state.userAuthData = userInfo
+            state.user = user,
+            state.authenticated = isTrue
+        },
+        userAuthenticated(state, authenticated) {
+            state.authenticated = authenticated
+        }
 
     },
 
