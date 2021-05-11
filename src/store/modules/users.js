@@ -22,7 +22,7 @@ export default {
                         localStorage.setItem('authUser', JSON.stringify(newData))
                         // axios.defaults.headers.common = {'Content-Type': 'application/json','authHeader':'Bearer ' + newData.token}
                         commit('authenticated', newData, user, true)
-                        resolve(data.data)
+                        resolve(newData)
                     }
                 })
                 .catch(err => {
@@ -31,17 +31,14 @@ export default {
             })
         },
         SignUp: ({commit}, payload) => {
-            return new Promise((resolve, reject) => {
                 axios.post('signUp', payload)
                 .then((data) => {
                     if(data.status === 201) {
-                        resolve(data.data)
+                        //
                     }
                 })
                 .catch(err => {
-                    reject(err)
-                }) 
-            })
+                })
         },
         isAuthenticated: ({commit}) => {
             if(localStorage.getItem('authUser')) {

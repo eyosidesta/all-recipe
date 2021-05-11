@@ -2,6 +2,14 @@
 <v-main>
 <h2>Add your recipe</h2>
 <br/>
+<div class="text-center">
+  <v-progress-circular
+    :size="50"
+    color="primary"
+    indeterminate
+    v-if="progressCircular"
+  ></v-progress-circular>
+</div>
   <validation-observer
     ref="observer"
     v-slot="{ invalid }"
@@ -68,6 +76,12 @@
       </v-btn>
     </form>
   </validation-observer>
+  <v-snackbar
+  v-model="snackbar"
+  :top="true"
+  :timeout="timeout">
+    {{text}}
+  </v-snackbar>
 </v-main>
     
 </template>
@@ -91,15 +105,21 @@
       ValidationObserver,
     },
     data: () => ({
+      progressCircular: false,
       name: '',
       description: '',
       imageUrl: '',
-      image: null
+      image: null,
+      snackbar: false,
+      timeout: 3000,
+      text: '',
     }),
 
     methods: {
       submit () {
+        this.progressCircular = true
         if(!this.image) {
+          this.progressCircular = false
           alert('please upload emage')
           this.$refs.observer.reset()
         }
@@ -108,13 +128,21 @@
           description: this.description,
           image: this.image
         }
-          this.$store.dispatch('addRecipe', recipe_data)
+        this.$store.dispatch('addRecipe', recipe_data)
+        .then(success => {
+          this.progressCircular = false
+          this.snackbar = true
+          this.text = "recipe added successfully"
+          // this.$router.push('/')
+        })
+        .catch(err => {
+          this.progressCircular = false
+        })
         this.$refs.observer.validate()
         this.name='',
         this.description='',
         this.imageUrl=null,
         this.$refs.observer.reset()
-        this.$router.push('/')
       },
       clear () {
         this.name = ''

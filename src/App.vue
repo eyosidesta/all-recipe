@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-container>
-      <div v-if="$route.name !== 'login' || getAuthenticated">
+      <div v-if="$route.name !== 'login'">
         <SideBar />
       </div>
       <router-view></router-view>

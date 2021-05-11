@@ -1,9 +1,28 @@
 <template>
+  <div>
+    <v-container>
+      <v-btn
+      class="ml-3 mr-4"
+      elevation="1"
+      fab
+      small
+      @click.stop="drawer = !drawer">
+        <v-icon>
+      {{'mdi-format-list-bulleted'}}
+    </v-icon>
+      </v-btn>
+    </v-container>
      <v-navigation-drawer
+     id="default-drawer"
       v-model="drawer"
       app
-      permanent
+      :dark="false"
+      :right="$vuetify.rtl"
       color="white"
+      :mini-variant.sync = "mini"
+      mini-variant-width="80"
+      width="260"
+      
     >
       <v-sheet
         color="grey lighten-4"
@@ -65,6 +84,7 @@
         </div>
         </template>
     </v-navigation-drawer>
+    </div>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
@@ -89,6 +109,7 @@ export default {
     // isLocallySaved: false,
     userInfo: {},
     cards: ['Today', 'Yesterday'],
+    mini: false,
     drawer: null,
     links: [
       ['home', 'All Recipes', '/'],
@@ -105,7 +126,12 @@ export default {
 }
 </script>
 <style scoped>
-div >>> .v-list a {
+  div >>> .v-list a {
     text-decoration: none;
 }
-</style>
+
+</style>>
+
+
+
+

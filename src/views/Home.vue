@@ -9,109 +9,29 @@
   fluid
 >
 
-<v-row>
-  <v-col
-    v-for="(recipe, index) in allRecipes"
+  <v-row>
+    <v-col v-for="(recipe, index) in allRecipes"
     :key="index"
     cols="12"
     sm="4"
-    max-width="340"
-  >
-  <v-card
-  
-    :loading="loading"
-    class="mx-auto my-6"
-    max-width="340"
-
-  >
-    <template slot="progress">
-      <v-progress-linear
-        color="deep-purple"
-        height="10"
-        indeterminate
-      ></v-progress-linear>
-    </template>
-    <router-link
-:to="'/'+recipe.id">
-    <v-img
-      height="200"
-      :src="recipe.image"
-    ></v-img>
-    </router-link>
-
-    <v-card-title>{{recipe.name}} --- {{allRecipes.length}}</v-card-title>
-
-    <v-card-text>
-      <v-row
-        align="center"
-        class="mx-0"
-      >
-        <v-rating
-          :value="4"
-          color="amber"
-          dense
-          half-increments
-          readonly
-          size="14"
-        ></v-rating>
-
-        <div class="grey--text ml-4">
-          {{getRatings[index] && getRatings[index].id}}
-          <!-- {{getRatings[index].id}} -->
-          <!-- {{console.log(getRatings)}} -->
-        </div>
-      </v-row>
-
-      <div class="my-4 subtitle-1">
-        $ {{recipe.user.fullname}}
-      </div>
-
-      <div>{{recipe.description}}</div>
-    </v-card-text>
-    
-    <v-divider class="mx-4"></v-divider>
-
-    <!-- <v-card-title>Tonight's availability</v-card-title>
-
-    <v-card-text>
-      <v-chip-group
-        v-model="selection"
-        active-class="deep-purple accent-4 white--text"
-        column
-      >
-        <v-chip>5:30PM</v-chip>
-
-        <v-chip>7:30PM</v-chip>
-
-        <v-chip>8:00PM</v-chip>
-
-        <v-chip>9:00PM</v-chip>
-      </v-chip-group>
-    </v-card-text> -->
-
-    <!-- <v-card-actions>
-      <v-btn
-        color="deep-purple lighten-2"
-        text
-        @click="reserve"
-      >
-        Reserve
-      </v-btn>
-    </v-card-actions> -->
-  </v-card>
-  </v-col>
-</v-row>
-
+    max-width="340">
+    <Recipes :recipe="recipe" :id="recipe.id"></Recipes>
+    </v-col>
+  </v-row>
 </v-container>
 </v-main>
 </template>
 <script>
 
 import {mapGetters, mapActions} from 'vuex'
+import Recipes from '../components/Recipes'
 export default {
   name: 'Home',
   actions: {
 
+  },
+  components: {
+    Recipes
   },
   data: () => ({
     dynamicComment: [],
@@ -170,14 +90,6 @@ export default {
         this.getRatingsByRecipeId(this.allRecipes[i].id)
         i++
       }
-      // this.allRecipes.forEach(element => {
-      //   console.log("[[[[[[[[[[[[[[[[[[[[[[[[[[[[", element)
-      //   return(
-      //   this.getRatingsByRecipeId(element.id)
-      //   )
-      // });
-      // this.getRatingsByRecipeId()
-      console.log("here", this.getRatings)
       
     }
 }

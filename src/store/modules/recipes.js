@@ -21,50 +21,33 @@ export default {
     },
     actions: {
          getRecipes ({commit, getters}) {
-            return new Promise((resolve, reject) => {
-                 axios.post('getRecipes',{})
-                .then((data) => {
-                    
-                    console.log("all data is ", data.data)
-                    const countRec = Object.keys(data.data).length
-                    console.log("count please", countRec)
-                    commit('setRecipes', data.data, countRec)
-                    console.log("now getter val length", getters.getCountAllRecipe)
-                })
-                .catch(err => {
-                    console.log("!Ooops something went wrong!", err)
-                })
+            axios.post('getRecipes',{})
+            .then((data) => {
+                
+                console.log("all data is ", data.data)
+                const countRec = data.data.length
+                commit('setRecipes', data.data, countRec)
+            })
+            .catch(err => {
             })
             
         },
         getRecipeByIdAction: ({commit, getters}, payload) => {
-            return new Promise((resolve, reject) => {
-                axios.post('getRecipeById', payload)
-                .then(data => {
-                    
-                    commit('setRecipeById', data.data)
-                    console.log("recipe by id", getters.getRecipeById)
-                    resolve(data.data)
-                })
-                .catch(err => {
-                    console.log('oops something went wrong!', err)
-                    reject(err)
-                })
+            axios.post('getRecipeById', payload)
+            .then(data => {
+                
+                commit('setRecipeById', data.data)
+            })
+            .catch(err => {
             })
         },
         getMyRecipe: ({commit, getters}, id) => {
-            return new Promise((resolve, reject) => {
-                axios.post('getRecipeByUserId', {id: id})
-                .then(data => {
-                    let countAllRec = Object.keys(data.data).length
-                    console.log("count my recipe", countAllRec)
-                    commit('setMyRecipe', data.data, countAllRec)
-                    resolve(data)
-                })
-                .catch(err => {
-                    console.log({'err': '!oops something went wrong'})
-                    reject(err)
-                })
+            axios.post('getRecipeByUserId', {id: id})
+            .then(data => {
+                let countAllRec = data.data.length
+                commit('setMyRecipe', data.data, countAllRec)
+            })
+            .catch(err => {
             })
         },
         addRecipe: ({commit, getters}, payload) => {
@@ -93,31 +76,34 @@ export default {
                 })
               })
             .then(fileData => {
-                console.log("fileddddddddddddddd", fileData.metadata)
+                console.log("fileData metadata", fileData.metadata)
                 imageUrl = fileData.downloadURL
                 console.log("url isssssssssssss", imageUrl)
                 return firebase.database().ref('recipes').child(key).update({imageUrl: imageUrl})
             })
             .then(() => {
-                return new Promise((resolve, reject) => {
-                    axios.post('/addRecipe', {name: payload.name,
-                        description: payload.description, image: imageUrl, user_id: getters.getToken[0].id})
-                        .then(data => {
-                            if(data.status === 200) {
-                                console.log("sucessfully added to hasura database--amaizing grace", data.data)
-                                commit('newRecipe', data.data)
-                                
-                                resolve(true)
-                            }
-                        })
-                        .catch(err => {
-                            reject(err)
-                        })
-                })
+                axios.post('/addRecipe', {name: payload.name,
+                    description: payload.description, image: imageUrl, user_id: getters.getToken[0].id})
+                    .then(data => {
+                        if(data.status === 200) {
+                            console.log("sucessfully added to hasura database--amaizing grace", data.data)
+                            commit('newRecipe', data.data)
+                        }
+                    })
+                    .catch(err => {
+                    })
                 
             })
             .catch((err) => {
                 console.log("error is: ", err)
+            })
+        },
+        deleteRecipe({commit}, id) {
+            axios.post('deleteRecipeByPk', {id: id})
+            .then(data => {
+                commit('recipeDeleted', id)
+            })
+            .catch(err => {
             })
         }
     },
@@ -126,11 +112,13 @@ export default {
             state.recipes = recipes,
             state.countAllRecipes = countRec
         },
-        newRecipe: (state, recipe) => {state.recipes.push(recipe)},
+        newRecipe: (state, recipe) => {state.recipes.unshift(recipe)},
         setMyRecipe: (state, recipes, countMyRec) => {
             state.myRecipe = recipes,
             state.countMyRecipe = countMyRec},
         setRecipeById: (state, recipe) => {state.recipeById = recipe},
-
+        recipeDeleted: (state, id) => {
+            state.myRecipe = state.myRecipe.filter(recipe => recipe.id !== id)
+        }
     }
 }

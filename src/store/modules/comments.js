@@ -9,36 +9,26 @@ export default {
     },
     actions: {
         getCommentByRecipeId({commit}, recipe_id) {
-            return new Promise((resolve, reject) => {
-                axios.post('getCommentByRecipeId', {recipe_id: recipe_id})
-                .then(data => {
-                    console.log('comments data is', data.data)
-                    commit('getRecipeData', data.data)
-                    resolve(true)
-                })
-                .catch(err => {
-                    console.log({'err' : 'something went wrong'})
-                    reject(err)
-                })
+            axios.post('getCommentByRecipeId', {recipe_id: recipe_id})
+            .then(data => {
+                console.log('comments data is', data.data)
+                commit('getRecipeData', data.data)
+            })
+            .catch(err => {
             })
         },
         addComment({commit}, payload) {
-            return new Promise((resolve, reject) => {
-                axios.post('addComment', payload)
-                .then(data => {
-                    console.log("comment data is ", data.data)
-                    commit('setComment', data.data)
-                    resolve(true)
-                })
-                .catch(err => {
-                    console.log({'err' : 'something went wrong'})
-                    reject(err)
-                })
+            axios.post('addComment', payload)
+            .then(data => {
+                console.log("comment data is ", data.data)
+                commit('setComment', data.data)
+            })
+            .catch(err => {
             })
         }
     },
     mutations: {
-        setComment: (state, response) => state.comments.push(response),
+        setComment: (state, response) => state.comments.unshift(response),
         getRecipeData: (state, response) => state.comments = response
     }
 }

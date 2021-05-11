@@ -11,34 +11,25 @@ export default {
     },
     actions: {
         getIngredientByUserId({commit}, user_id) {
-            return new Promise((resolve, reject) => {
-                axios.post('getIngredientByUserId', {id: user_id})
-                .then(data => {
-                    console.log("user ingredient issssss: ",data.data)
-                    commit('getUserIngredient', data.data)
-                })
+            axios.post('getIngredientByUserId', {id: user_id})
+            .then(data => {
+                commit('getUserIngredient', data.data)
             })
+            .catch(err=>{})
         },
         addRecipeIngredient({commit}, payload) {
-            return new Promise((resolve, reject) => {
-                axios.post('addIngredients', payload)
-                .then(data => {
-                    commit('addIngredient', data.data)
-                    resolve(true)
-                })
+            axios.post('addIngredients', payload)
+            .then(data => {
+                commit('addIngredient', data.data)
             })
+            .catch(err => {})
         },
         getIngredientByRecipeId({commit}, payload) {
-            return new Promise((resolve, reject) => {
-                axios.post('getRecipeIngredient', payload)
-                .then(data => {
-                    console.log("byyyyyyyy", data.data)
-                    commit('getRecipeIngredient', data.data)
-                    resolve(true)
-                })
-                .catch(err => {
-                    reject(err)
-                })
+            axios.post('getRecipeIngredient', payload)
+            .then(data => {
+                commit('getRecipeIngredient', data.data)
+            })
+            .catch(err => {
             })
         }
     },

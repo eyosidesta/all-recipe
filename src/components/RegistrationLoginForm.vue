@@ -1,6 +1,14 @@
 <template>
   <v-app id="inspire">
     <v-content>
+      <div class="text-center">
+        <v-progress-circular
+        :size="30"
+        v-if="progressCircular"
+        indeterminate
+        color="primary"
+        ></v-progress-circular>
+      </div>
       <v-container class="fill-height" fluid>
         <v-row align="center" justify="center">
           <v-col cols="12" sm="8" md="8">
@@ -147,6 +155,15 @@
             </v-card>
           </v-col>
         </v-row>
+        <div>
+          <v-snackbar
+            v-model="snackbar"
+            :timeout="timeout"
+            :top="true">
+            {{snackbarText}}
+          </v-snackbar>
+        </div>
+        
       </v-container>
     </v-content>
   </v-app>
@@ -154,6 +171,10 @@
 <script>
 export default {
   data: () => ({
+    snackbar: false,
+    progressCircular: false,
+    snackbarText: '',
+    timeout: 4000,
     isLoading: false,
     valid: false,
     loginEmail: '',
@@ -174,18 +195,23 @@ export default {
   }),
   methods: {
       signIn() {
+        this.progressCircular = true
           this.$store.dispatch("SignIn", {
               email: this.loginEmail,
               password: this.loginPassword
           })
           .then(success=> {
-            
+            this.progressCircular = false
             this.$router.push("/")
             // location.reload()
               // console.log("successfully logged in");
           })
           .catch(err => {
-              console.log('error found in logging in', err);
+            this.progressCircular = false
+            this.snackbar = true,
+            this.snackbarText = 'Either email or password is incorrect. please try again'
+            this.loginEmail = '',
+            this.loginPassword = ''
           })
       },
       signUp() {
@@ -195,10 +221,12 @@ export default {
               password: this.registrationPassword
           })
           .then(sucess => {
-              console.log("successfully registered")
+              this.snackbar = true
+              this.snackbarText = 'successfully registered'
+              this.step--
           })
           .catch(err => {
-              console.log('error while registering', err)
+            this.snackbarText = 'Error while registration. Please try again'
           })
       }
   },

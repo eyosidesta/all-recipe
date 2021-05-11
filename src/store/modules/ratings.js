@@ -2,52 +2,69 @@ import axios from 'axios'
 export default {
     state: {
         ratings: [],
+        userRecipeRating: [],
         count: 0,
+        countUserRecipeRating: 0
     },
     getters: {
         getRatings: state => state.ratings,
-        getCount: state => state.count
+        getCount: state => state.count,
+        getUserRecipeCount: state => state.countUserRecipeRating,
+        getUserRecipeRating: state => state.userRecipeRating
     },
     actions: {
         getRatingsByRecipeId ({commit}, id) {
-            console.log("--------------------")
-            return new Promise((resolve, reject) => {
-                axios.post('countRating', {id: id})
-                .then(data => {
-                    console.log("------------------------------------------------")
-                    console.log('length of rating is ', Object.keys(data.data).length)
-                    commit('getRatingMutation', data.data)
-                    resolve(data.data)
-                })
-                .catch(err => {
-                    console.log({'err': 'something went wrong'})
-                    reject(err)
-                })
+            axios.post('countRating', {id: id})
+            .then(data => {
+                commit('getRatingMutation', data.data)
+            })
+            .catch(err => {
             })
         },
         addRating({commit}, payload) {
-            return new Promise((resolve, reject) => {
-                axios.post('addRating', payload)
+            axios.post('addRating', payload)
+            .then(data => {
+                commit('addRatingMutation', data.data)
+            })
+            .catch(err => {
+            })
+        },
+        getRatingByUserIdRecipeId({commit}, payload) {
+            axios.post('getRatingByUserIdRecipeId', payload)
+            .then(data => {
+                commit('ratingByUserIdRecipeId', data.data)
+            })
+            .catch(err => {
+            })
+        },
+        deleteRatingById({commit}, id) {
+                axios.post('deleteRating', {id: id})
                 .then(data => {
-                    console.log('rating data added successfull')
-                    commit('addRatingMutation', data.data)
-                    resolve(data.data)
+                    commit('ratingDeleted', id)
                 })
                 .catch(err => {
-                    console.log({'err': 'something went wrong'})
-                    reject(err)
                 })
-            })
         }
     },
     mutations: {
         getRatingMutation(state, response) {
             state.ratings = response
-            state.count = Object.keys(response).length
+            // state.count = Object.keys(response).length
+            state.count = response.length
         },
         addRatingMutation(state, response) {
             state.ratings.push(response)
             state.count++
+        },
+        ratingByUserIdRecipeId(state, response) {
+            state.countUserRecipeRating = response.length
+            state.userRecipeRating = response
+        },
+        ratingDeleted(state, id) {
+            state.ratings = state.ratings.filter(todo => todo.id !== id)
+            state.count--
+            state.countUserRecipeRating--
+            state.userRecipeRating = []
         }
     },
 }
